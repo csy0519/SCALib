@@ -265,6 +265,8 @@ impl BPState {
         // Use a macro to call very similar functions in match arms.
         // Needed because of anonymous return types of these functions.
         macro_rules! prop_factor {
+            //macro_rules! 是Rust中用于定义宏的关键字
+            //这是宏 prop_factor 的调用，其中 $f 是传递给宏的函数名参数
             ($f:ident, $($arg:expr),*) => {
                 {
                     let it = $f(factor, &mut self.belief_from_var, dest, clear_incoming, $($arg,)*);
