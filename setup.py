@@ -42,15 +42,16 @@ scalib_features = ["pyo3/abi3"]
 if sys.platform == "linux":
     scalib_features.append("blis")
 
+#告诉setuptools如何构建和集成Rust代码
 setup(
     project_urls={
         "Bug Tracker": "https://github.com/simple-crypto/scalib/issues",
     },
     rust_extensions=[
         RustExtension(
-            "scalib._scalib_ext",
-            path="src/scalib_ext/scalib-py/Cargo.toml",
-            binding=Binding.PyO3,
+            "scalib._scalib_ext",#Rust扩展的名称，Python代码中将使用这个名称来导入Rust编译的模块
+            path="src/scalib_ext/scalib-py/Cargo.toml",#Python将会调用scalib_ext/scalib-py目录下的Rust代码
+            binding=Binding.PyO3,#这指定了使用PyO3库为Rust和Python之间提供绑定。PyO3是一个让Rust和Python互操作的流行库
             features=scalib_features,
             py_limited_api=True,
         )
