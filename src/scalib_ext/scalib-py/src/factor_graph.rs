@@ -1,5 +1,5 @@
 //! Python binding of SCALib's FactorGraph rust implementation.
-
+//语句导入了Rust中使用的模块和功能。
 use std::collections::HashMap;
 use std::sync::Arc;
 
@@ -10,7 +10,7 @@ use pyo3::prelude::*;
 use pyo3::types::{PyBytes, PyTuple};
 
 use scalib::sasca;
-
+//定义了一个Python模块中的类，这意味着FactorGraph类将在Python中作为_scalib_ext.FactorGraph可用。
 #[pyclass(module = "_scalib_ext")]
 pub(crate) struct FactorGraph {
     inner: Option<Arc<sasca::FactorGraph>>,
@@ -27,10 +27,11 @@ impl FactorGraph {
 }
 
 // TODO run stuff on SCALib thread pool
-
+//指明接下来的方法将被暴露给Python。
 #[pymethods]
 impl FactorGraph {
     #[new]
+    //定义了构造函数，用于在Python中创建FactorGraph对象。
     #[pyo3(signature = (*args))]
     fn new(args: &PyTuple) -> PyResult<Self> {
         if args.len() == 0 {
