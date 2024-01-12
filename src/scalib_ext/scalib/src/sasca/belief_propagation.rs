@@ -1,3 +1,4 @@
+//1、BPState 方法；2、信念传播计算函数
 use std::sync::Arc;
 
 use itertools::Itertools;
