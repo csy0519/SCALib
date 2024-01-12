@@ -56,7 +56,7 @@ impl FactorGraph {
             })
         }
     }
-
+//__getstate__方法用于序列化，序列化是指将对象状态转换为可存储或传输的格式的过程
     pub fn __getstate__(&self, py: Python) -> PyResult<PyObject> {
         let to_ser: Option<&sasca::FactorGraph> = self.inner.as_deref();
         Ok(PyBytes::new(py, &serialize(&to_ser).unwrap()).to_object(py))
@@ -72,8 +72,9 @@ impl FactorGraph {
             Err(e) => Err(e),
         }
     }
-
+    //允许Python代码初始化一个信念传播的过程，返回一个包含新创建的BPState对象的PyResult
     pub fn new_bp(&self, py: Python, nmulti: u32, public_values: PyObject) -> PyResult<BPState> {
+        //let关键字用于创建变量并将其初始化为特定的值，?表示如果出现错误则返回错误
         let pub_values = pyobj2pubs(py, public_values, self.get_inner().public_multi())?;
         Ok(BPState {
             inner: Some(sasca::BPState::new(
@@ -98,6 +99,7 @@ impl FactorGraph {
             .map(|v| self.get_inner().var_name(v))
             .collect())
     }
+    //用于进行信念传播状态的合法性检查
     pub fn sanity_check(
         &self,
         py: Python,
@@ -116,7 +118,7 @@ impl FactorGraph {
             .map_err(|e| PyValueError::new_err(e.to_string()))
     }
 }
-
+//将 Python 对象表示的公共值转换为 Rust 中的公共值
 fn pyobj2pubs<'a>(
     py: Python,
     public_values: PyObject,
@@ -154,6 +156,7 @@ impl BPState {
     fn get_inner(&self) -> &sasca::BPState {
         self.inner.as_ref().unwrap()
     }
+    //作用是允许修改BPState内部的状态
     fn get_inner_mut(&mut self) -> &mut sasca::BPState {
         self.inner.as_mut().unwrap()
     }
@@ -205,10 +208,10 @@ impl BPState {
     pub fn is_cyclic(&self) -> bool {
         self.get_inner().is_cyclic()
     }
-
+    //先验概率
     pub fn set_evidence(&mut self, py: Python, var: &str, distr: PyObject) -> PyResult<()> {
         let var_id = self.get_var(var)?;
-        let bp = self.get_inner_mut();
+        let bp = self.get_inner_mut();//返回inner 字段的可变引用 &mut sasca::BPState
         let distr = obj2distr(py, distr, bp.get_graph().var_multi(var_id))?;
         bp.set_evidence(var_id, distr)
             .map_err(|e| PyTypeError::new_err(e.to_string()))?;
@@ -235,10 +238,12 @@ impl BPState {
         self.get_inner_mut().drop_state(var_id);
         Ok(())
     }
+    //获取从指定因子到给定变量的信念。
     pub fn get_belief_to_var(&self, py: Python, var: &str, factor: &str) -> PyResult<PyObject> {
         let edge_id = self.get_edge_named(var, factor)?;
         distr2py(py, self.get_inner().get_belief_to_var(edge_id))
     }
+    //获取从给定变量到指定因子的信念。
     pub fn get_belief_from_var(&self, py: Python, var: &str, factor: &str) -> PyResult<PyObject> {
         let edge_id = self.get_edge_named(var, factor)?;
         distr2py(py, self.get_inner().get_belief_from_var(edge_id))
@@ -343,6 +348,7 @@ impl BPState {
             inner: Some(self.get_inner().get_graph().clone()),
         }
     }
+    //函数执行“无环”的传播
     pub fn propagate_acyclic(
         &mut self,
         py: Python,
