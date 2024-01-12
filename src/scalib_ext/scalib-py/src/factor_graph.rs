@@ -17,6 +17,7 @@ pub(crate) struct FactorGraph {
     //inner 是 FactorGraph 结构体的一个私有字段，它是 Option<Arc<sasca::FactorGraph>> 类型的。
 }
 impl FactorGraph {
+    //get_inner 用于获取结构体内部的Arc引用。如果inner是None，它会在运行时失败
     fn get_inner(&self) -> &Arc<sasca::FactorGraph> {
         self.inner.as_ref().unwrap()
     }
