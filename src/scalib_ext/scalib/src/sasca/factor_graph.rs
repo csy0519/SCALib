@@ -178,6 +178,7 @@ pub enum FGError {
 type FGResult<T> = Result<T, FGError>;
 
 impl FactorGraph {
+    //根据变量ID和因子ID获取边的ID
     pub fn edge(&self, var: VarId, factor: FactorId) -> FGResult<EdgeId> {
         self.var(var)
             .edges
@@ -188,6 +189,7 @@ impl FactorGraph {
                 factor,
             })
     }
+    //遍历公共值，返回它们的名称和多值标志
     pub fn public_multi(&self) -> impl Iterator<Item = (&str, bool)> {
         self.publics.iter().map(|(n, v)| (n.as_str(), v.multi))
     }
@@ -197,6 +199,7 @@ impl FactorGraph {
             .map(VarId::from_idx)
             .ok_or_else(|| FGError::NoVar(var.to_owned()))
     }
+    //var_multi 和 factor_multi 和 edge_multi: 检查变量、因子或边是否是多值的
     pub(super) fn var(&self, var: VarId) -> &Var {
         &self.vars[var.idx()]
     }
