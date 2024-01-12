@@ -255,7 +255,7 @@ impl BPState {
         }
         self.var_state[var_id] = var_state;
     }
-   //因子向目标变量传播信息
+   //因子向目标变量(多个)传播信息
     pub fn propagate_factor(&mut self, factor_id: FactorId, dest: &[VarId], clear_incoming: bool) {
         let factor = self.graph.factor(factor_id);
         // Pre-erase to have buffers available in cache allocator.
@@ -278,6 +278,7 @@ impl BPState {
                 }
             };
         }
+        //match 表达式根据 factor.kind 的不同值选择不同的分支来执行不同类型的因子传播操作。每个分支使用 prop_factor 宏来调用相应的传播函数，并传递了相应的参数。
         match &factor.kind {
             FactorKind::AND { .. } => {
                 prop_factor!(factor_gen_and, &self.pub_reduced[factor_id])
