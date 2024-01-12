@@ -255,12 +255,12 @@ impl BPState {
         }
         self.var_state[var_id] = var_state;
     }
-
+   //因子向目标变量传播信息
     pub fn propagate_factor(&mut self, factor_id: FactorId, dest: &[VarId], clear_incoming: bool) {
         let factor = self.graph.factor(factor_id);
         // Pre-erase to have buffers available in cache allocator.
         for d in dest {
-            self.belief_to_var[factor.edges[d]].reset();
+            self.belief_to_var[factor.edges[d]].reset();//针对目标变量集合 dest，重置与每个目标变量关联的信念，以准备进行下一轮的信念传播
         }
         // Use a macro to call very similar functions in match arms.
         // Needed because of anonymous return types of these functions.
