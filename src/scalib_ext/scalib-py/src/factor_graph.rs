@@ -30,11 +30,12 @@ impl FactorGraph {
 }
 
 // TODO run stuff on SCALib thread pool
-//指明接下来的方法将被暴露给Python。
+//指明接下来的方法将被暴露给Python。两个impl FactorGraph区分用于Rust内部逻辑的方法和暴露给Python的方法
 #[pymethods]
 impl FactorGraph {
     #[new]
     //定义了构造函数，用于在Python中创建FactorGraph对象。
+    //如果提供了参数，那么new函数会从这些参数中提取因子图的描述和表格。表格数据将被用来在Rust中构建一个因子图
     #[pyo3(signature = (*args))]
     fn new(args: &PyTuple) -> PyResult<Self> {
         if args.len() == 0 {
