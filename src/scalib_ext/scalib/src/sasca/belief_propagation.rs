@@ -1,4 +1,4 @@
-//1、BPState 方法；2、信念传播计算函数
+//1、BPState 方法：propagate_factor 和 propagate_var: 分别针对因子和变量进行信念传播；2、信念传播计算函数
 use std::sync::Arc;
 
 use itertools::Itertools;
