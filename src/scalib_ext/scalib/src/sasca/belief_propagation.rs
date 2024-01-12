@@ -269,6 +269,7 @@ impl BPState {
                 {
                     let it = $f(factor, &mut self.belief_from_var, dest, clear_incoming, $($arg,)*);
                     for (mut distr, dest) in it.zip(dest.iter()) {
+                        //同时迭代（遍历）it dest的元素
                         distr.regularize();
                         self.belief_to_var[factor.edges[dest]] = distr;
                     }
