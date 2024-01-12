@@ -14,11 +14,13 @@ use scalib::sasca;
 #[pyclass(module = "_scalib_ext")]
 pub(crate) struct FactorGraph {
     inner: Option<Arc<sasca::FactorGraph>>,
+    //inner 是 FactorGraph 结构体的一个私有字段，它是 Option<Arc<sasca::FactorGraph>> 类型的。
 }
 impl FactorGraph {
     fn get_inner(&self) -> &Arc<sasca::FactorGraph> {
         self.inner.as_ref().unwrap()
     }
+    //get_factor 方法试图从因子图中获取一个因子的标识符。如果找到了这个因子，它就返回这个因子的ID；如果没有找到，它就返回一个错误。
     fn get_factor(&self, factor: &str) -> PyResult<sasca::FactorId> {
         self.get_inner()
             .get_factorid(factor)
