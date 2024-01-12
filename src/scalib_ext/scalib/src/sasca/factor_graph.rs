@@ -1,3 +1,4 @@
+//FactorGraph 方法:Node 方法:FactorKind 枚举:错误处理 (FGError):
 use std::fmt;
 
 use indexmap::IndexMap;
