@@ -36,6 +36,8 @@ pub(super) struct Var {
 }
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+
+//pub(super)字段在父模块中可见，但在外部模块中不可见
 pub(super) struct Factor {
     pub(super) kind: FactorKind,
     pub(super) multi: bool,
@@ -57,8 +59,9 @@ impl Factor {
 }
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+//具有类型参数 T 的枚举，类型参数默认值为 TableId
 pub(super) enum FactorKind<T = TableId> {
-    AND { vars_neg: Vec<bool> },
+    AND { vars_neg: Vec<bool> },//这个枚举成员关联了一个名为 vars_neg 的字段，该字段的类型是 Vec<bool>，预留字段
     XOR,
     NOT,
     ADD,
@@ -68,15 +71,17 @@ pub(super) enum FactorKind<T = TableId> {
 
 impl FactorKind {
     fn merge(&self, a: ClassVal, b: ClassVal, nc: usize) -> ClassVal {
+        //它根据枚举类型 FactorKind 的不同成员，执行不同的代码块
         match self {
-            FactorKind::AND { vars_neg: _ } => a & b,
+            FactorKind::AND { vars_neg: _ } => a & b,//用 _ 来表示我们不使用vars_neg
             FactorKind::XOR => a ^ b,
             FactorKind::ADD => (((a as u64) + (b as u64)) % (nc as u64)) as ClassVal,
             FactorKind::MUL => (((a as u64) + (b as u64)) % (nc as u64)) as ClassVal,
-            FactorKind::NOT | FactorKind::LOOKUP { .. } => unreachable!(),
+            FactorKind::NOT | FactorKind::LOOKUP { .. } => unreachable!(),//表示在代码执行到这个点时应该是不可达的
         }
     }
     fn neutral(&self, nc: usize) -> ClassVal {
+        //中性元素？
         match self {
             FactorKind::AND { vars_neg: _ } => (nc - 1) as ClassVal,
             FactorKind::XOR | FactorKind::ADD => 0,
@@ -85,6 +90,7 @@ impl FactorKind {
         }
     }
 }
+//FactorKind实例化和调用例子：let xor_factor = FactorKind::XOR;   let result_xor = xor_factor.merge(a, b, nc);
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 pub(super) struct Edge {
