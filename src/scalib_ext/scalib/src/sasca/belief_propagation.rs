@@ -1,4 +1,4 @@
-//1、BPState 方法：propagate_factor 和 propagate_var: 分别针对因子和变量进行信念传播；2、信念传播计算函数
+//1、BPState 方法：其中propagate_factor 和 propagate_var: 分别针对因子和变量进行信念传播；2、因子函数 (factor_gen_and, factor_xor, factor_not, 等):这些函数用于在因子图中的不同因子类型上执行信念传播计算。
 use std::sync::Arc;
 
 use itertools::Itertools;
