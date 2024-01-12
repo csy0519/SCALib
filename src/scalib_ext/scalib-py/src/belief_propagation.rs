@@ -46,7 +46,7 @@ pub fn to_var(function: &PyDict) -> Var {
         vartype: f,
     }
 }
-
+//Python代码可以直接调用这个Rust函数
 /// Convert the python description of a function node to a Func.
 pub fn to_func(function: &PyDict) -> Func {
     let neighboors: Vec<isize> = function.get_item("neighboors").unwrap().extract().unwrap();
