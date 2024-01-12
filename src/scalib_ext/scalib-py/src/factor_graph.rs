@@ -312,6 +312,7 @@ impl BPState {
             .map_err(|e| PyTypeError::new_err(e.to_string()))?;
         Ok(())
     }
+
     pub fn propagate_factor(
         &mut self,
         py: Python,
@@ -331,6 +332,7 @@ impl BPState {
             Ok(())
         })
     }
+    //执行循环传播
     pub fn propagate_loopy_step(
         &mut self,
         py: Python,
