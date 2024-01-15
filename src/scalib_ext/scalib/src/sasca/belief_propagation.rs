@@ -513,21 +513,22 @@ fn reset_incoming(
     }
 }
 
-fn factor_xor<'a>(
+fn factor_xor<'a>(//'a代表生命周期
     factor: &'a Factor,
-    belief_from_var: &'a mut EdgeSlice<Distribution>,
+    belief_from_var: &'a mut EdgeSlice<Distribution>,//一个对 EdgeSlice<Distribution> 类型的可变引用，表示从变量到分布的映射。
     dest: &'a [VarId],
     clear_incoming: bool,
     pub_red: &PublicValue,
-) -> impl Iterator<Item = Distribution> + 'a {
+) -> impl Iterator<Item = Distribution> + 'a { //+ 'a 表示返回值的生命周期与参数 'a相同
     // Special case for single-input XOR
     if factor.edges.len() == 2 {
         return dest
-            .iter()
+            .iter()//.iter() 方法生成一个迭代器，遍历了 dest 数组中的元素。然后，.map() 方法接受这个迭代器，并对其中的每个元素执行闭包|var|中的操作。
             .map(|var| {
+                //.map(|var| { ... }) 的作用是对集合中的每个元素执行闭包中定义的操作，然后将这些操作的结果构建成一个新的集合（或迭代器）
                 let i = factor.edges.get_index_of(var).unwrap();
                 let mut distr = belief_from_var[factor.edges[1 - i]].take_or_clone(clear_incoming);
-                distr.xor_cst(pub_red);
+                distr.xor_cst(pub_red);//使用 pub_red 进行常数异或
                 distr
             })
             .collect::<Vec<_>>()
