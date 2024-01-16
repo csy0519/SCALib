@@ -69,6 +69,7 @@ def main():
                 """
 
     for i in range(16):
+        #f""" ... """ 被用于创建一个包含多行文本的字符串
         graph_desc += f"""
                 VAR SINGLE k{i} # The key
                 PUB MULTI p{i}  # The plaintext
