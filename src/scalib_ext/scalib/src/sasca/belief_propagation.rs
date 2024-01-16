@@ -94,6 +94,7 @@ pub enum BPError {
 }
 
 impl BPState {
+    //BPState初始化，输入因子图、能量迹数量、明文，初始化变量分布、信念分布
     pub fn new(
         graph: std::sync::Arc<FactorGraph>,
         nmulti: u32,
