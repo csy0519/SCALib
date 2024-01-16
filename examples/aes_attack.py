@@ -88,7 +88,9 @@ def main():
         factor_graph,
         ntraces_a,
         {f"p{i}": labels_a[f"p{i}"].astype(np.uint32) for i in range(16)},
-        //创建一个新的字典，其中包含了16个键值对。每个键都是以"p0"到"p15"格式命名的字符串，对应的值是从labels_a中提取出来的，并转换为32位无符号整数
+        #创建一个新的字典，其中包含了16个键值对。每个键都是以"p0"到"p15"格式命名的字符串，对应的值是从labels_a中提取出来的，并转换为32位无符号整数
+        #对应明文16字节
+       
     )
 
     for i in range(16):
