@@ -293,6 +293,7 @@ impl BPState {
             FactorKind::MUL => prop_factor!(factor_mul, &self.pub_reduced[factor_id]),
             FactorKind::LOOKUP { table } => {
                 prop_factor!(factor_lookup, &self.graph.tables[*table])
+                //使用宏 prop_factor! 来调用不同的传播函数
             }
         }
     }
