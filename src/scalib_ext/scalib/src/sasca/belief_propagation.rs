@@ -94,7 +94,7 @@ pub enum BPError {
 }
 
 impl BPState {
-    //BPState初始化，输入因子图、能量迹数量、明文，初始化变量分布、信念分布
+    //BPState初始化，输入因子图、能量迹数量、明文，初始化变量分布var_state、信念分布var_state，并赋值给evidence(var_state)、belief_from_var、belief_to_var（beliefs）
     pub fn new(
         graph: std::sync::Arc<FactorGraph>,
         nmulti: u32,
@@ -105,7 +105,7 @@ impl BPState {
             .values()
             .map(|v| Distribution::new(v.multi, graph.nc, nmulti))
             .collect();
-        let beliefs: EdgeVec<_> = graph
+        let var_state: EdgeVec<_> = graph
             .edges
             .iter()
             .map(|e| Distribution::new(graph.factor(e.factor).multi, graph.nc, nmulti))
@@ -116,7 +116,7 @@ impl BPState {
         let cyclic = graph.is_cyclic(nmulti > 1);
         let plans = FftPlans::new(graph.nc);
         Self {//这个 Self 用于作为构造函数的返回值
-            evidence: var_state.clone(),
+            evidence: var_state.clone(),//克隆值不会互相影响
             belief_from_var: beliefs.clone(),
             belief_to_var: beliefs,
             var_state,
@@ -157,7 +157,7 @@ impl BPState {
         Ok(())
     }
     pub fn drop_evidence(&mut self, var: VarId) {
-        self.evidence[var] = self.evidence[var].as_uniform();
+        self.evidence[var] = self.evidence[var].as_uniform();//重置为均匀分布
     }
     pub fn get_state(&self, var: VarId) -> &Distribution {
         &self.var_state[var]
