@@ -114,7 +114,7 @@ impl BPState {
         let pub_reduced = graph.reduce_pub(&public_values);
         let cyclic = graph.is_cyclic(nmulti > 1);
         let plans = FftPlans::new(graph.nc);
-        Self {
+        Self {//这个 Self 用于作为构造函数的返回值
             evidence: var_state.clone(),
             belief_from_var: beliefs.clone(),
             belief_to_var: beliefs,
