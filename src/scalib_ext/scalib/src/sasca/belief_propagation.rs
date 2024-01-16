@@ -825,13 +825,13 @@ fn factor_lookup<'a>(
     table: &'a Table,
 ) -> impl Iterator<Item = Distribution> + 'a {
     // we know that there is no constant involved
-    assert_eq!(factor.edges.len(), 2);
-    dest.iter().map(move |dest| {
+    assert_eq!(factor.edges.len(), 2);//断言 factor.edges 的长度是否等于 2
+    dest.iter().map(move |dest| {//通过 map 方法将每个元素映射为一个新的值
         let i = factor.edges.get_index_of(dest).unwrap();
-        let distr = belief_from_var[factor.edges[1 - i]].clone();
+        let distr = belief_from_var[factor.edges[1 - i]].clone();//.clone() 方法，创建这个对象的克隆副本
         let res = if i == 0 {
             // dest is res
-            distr.map_table(table.values.as_slice())
+            distr.map_table(table.values.as_slice())//as_slice()提供对数据的引用
         } else {
             distr.map_table_inv(table.values.as_slice())
         };
