@@ -125,7 +125,7 @@ pub struct FactorGraph {
     pub(super) edges: EdgeVec<Edge>,
     pub(super) publics: NamedList<Public>,
     pub(super) tables: NamedList<Table>,
-    pub(super) petgraph: petgraph::Graph<Node, EdgeId, petgraph::Undirected>,
+    pub(super) petgraph: petgraph::Graph<Node, EdgeId, petgraph::Undirected>,//表示了一个无向图，其中节点类型为 Node，边的标识符类型为 EdgeId
     pub(super) var_graph_ids: VarVec<petgraph::graph::NodeIndex>,
     pub(super) factor_graph_ids: FactorVec<petgraph::graph::NodeIndex>,
 }
