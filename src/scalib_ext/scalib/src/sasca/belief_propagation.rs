@@ -108,6 +108,7 @@ impl BPState {
             .edges
             .iter()
             .map(|e| Distribution::new(graph.factor(e.factor).multi, graph.nc, nmulti))
+            //v.multi 表示是否为多模态分布，如果为 true，则表示这是一个多模态分布，否则为单模态。graph.nc 表示分布的类别数量或类别数。nmulti 表示分布的数量，即有多少个不同的模态。
             .collect();
         let pub_reduced = graph.reduce_pub(&public_values);
         let cyclic = graph.is_cyclic(nmulti > 1);
