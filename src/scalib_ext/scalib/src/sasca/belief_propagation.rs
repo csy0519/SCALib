@@ -381,8 +381,9 @@ impl BPState {
         }
         for (node, parent) in self.graph.propagation_order(var) {
             match node {
+                //match node 是一个匹配语句，用于匹配 node 的值并执行相应的代码块。在这里，node 的类型是 Node，它可以是 Node::Var(var_id) 或 Node::Factor(factor_id) 中的一种
                 Node::Var(var_id) => {
-                    let to_edges = if let Some(dest_factor) = parent {
+                    let to_edges = if let Some(dest_factor) = parent {//执行顺序不明？ 总的来说是判断parent是否为空，获取边
                         vec![self.graph.var(var_id).edges[&dest_factor.factor().unwrap()]]
                     } else {
                         vec![]
