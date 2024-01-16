@@ -372,7 +372,7 @@ impl BPState {
     }
     pub fn propagate_acyclic(
         &mut self,
-        var: VarId,
+        var: VarId,//变量：类型
         clear_intermediates: bool,
         clear_evidence: bool,
     ) -> Result<(), BPError> {
@@ -382,17 +382,17 @@ impl BPState {
         for (node, parent) in self.graph.propagation_order(var) {
             match node {
                 //match node 是一个匹配语句，用于匹配 node 的值并执行相应的代码块。在这里，node 的类型是 Node，它可以是 Node::Var(var_id) 或 Node::Factor(factor_id) 中的一种
-                Node::Var(var_id) => {
-                    let to_edges = if let Some(dest_factor) = parent {//执行顺序不明？ 总的来说是判断parent是否为空，获取边
-                        vec![self.graph.var(var_id).edges[&dest_factor.factor().unwrap()]]
+                Node::Var(var_id) => {//如果node 的值是 Node::Var(var_id)，则匹配成功，将 var_id 绑定到 var_id 变量中
+                    let to_edges = if let Some(dest_factor) = parent {//执行顺序不明？ 总的来说是判断parent是否为空，获取变量和因子连接的边
+                        vec![self.graph.var(var_id).edges[&dest_factor.factor().unwrap()]]//vec!用于创建 Vec
                     } else {
                         vec![]
                     };
                     self.propagate_var_to(var_id, to_edges, clear_intermediates, clear_evidence);
                 }
                 Node::Factor(factor_id) => {
-                    let parent_var = parent.unwrap().var().unwrap();
-                    self.propagate_factor(factor_id, &[parent_var], clear_intermediates);
+                    let parent_var = parent.unwrap().var().unwrap();//parent 是 Option<Node>，unwrap()解包
+                    self.propagate_factor(factor_id, &[parent_var], clear_intermediates);//函数接受切片作为参数，即使只有一个元素，也需要将它封装成切片
                 }
             }
         }
