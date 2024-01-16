@@ -100,6 +100,7 @@ def main():
     print("    4.3 Run belief propagation")
     for i in range(16):
         bp.bp_acyclic(f"k{i}")
+        #对16个不同的秘密密钥字节（k0 到 k15）分别运行一次信念传播
 
     print("5. Attack evaluation")
     print("    5.1 Byte-wise attack")
