@@ -94,18 +94,19 @@ pub enum BPError {
 }
 
 impl BPState {
-    //BPState初始化，输入因子图、能量迹数量、明文，初始化变量分布var_state、信念分布var_state，并赋值给evidence(var_state)、belief_from_var、belief_to_var（beliefs）
+    //BPState初始化，输入因子图、能量迹数量、明文，初始化变量分布var_state、信念分布beliefs，并赋值给evidence(var_state)、belief_from_var、belief_to_var（beliefs）
     pub fn new(
         graph: std::sync::Arc<FactorGraph>,
         nmulti: u32,
         public_values: Vec<PublicValue>,
     ) -> Self {
+       
         let var_state: VarVec<_> = graph
             .vars
             .values()
             .map(|v| Distribution::new(v.multi, graph.nc, nmulti))
             .collect();
-        let var_state: EdgeVec<_> = graph
+        let beliefs: EdgeVec<_> = graph
             .edges
             .iter()
             .map(|e| Distribution::new(graph.factor(e.factor).multi, graph.nc, nmulti))
@@ -235,7 +236,7 @@ impl BPState {
         assert!(!var.multi);
         let mut base = self.evidence[var_id].take_or_clone(clear_evidence);
         for e in other_edges {
-            base.multiply_to_single(&self.belief_to_var[e]);
+            base.multiply_to_single(&self.belief_to_var[e]);//证据与其他边缘的信念进行相乘
             if clear_beliefs {
                 self.belief_to_var[e].reset();
             }
@@ -251,15 +252,15 @@ impl BPState {
             .zip(local_products.into_iter())
             .zip(new_beliefs_global.into_iter())
         {
-            local.multiply_norm(std::iter::once(&global));
-            self.belief_from_var[*e] = local;
+            local.multiply_norm(std::iter::once(&global));//local 信念与 global 信念的乘法操作
+            self.belief_from_var[*e] = local;//更新该边缘的信念
             if clear_beliefs {
                 self.belief_to_var[*e].reset();
             }
         }
         self.var_state[var_id] = var_state;
     }
-   //因子向目标变量(多个)传播信息
+   //因子向父变量(一个或多个)传播信息
     pub fn propagate_factor(&mut self, factor_id: FactorId, dest: &[VarId], clear_incoming: bool) {
         let factor = self.graph.factor(factor_id);
         // Pre-erase to have buffers available in cache allocator.
@@ -317,6 +318,7 @@ impl BPState {
             clear_evidence,
         );
     }
+    //变量向父因子(一个或多个)传播信息
     pub fn propagate_var_to(
         &mut self,
         var_id: VarId,
@@ -328,7 +330,7 @@ impl BPState {
         let mut all_edges = var.edges.values().collect::<Vec<_>>();
         all_edges.sort_unstable();
         to_edges.sort_unstable();
-        let other_edges = all_edges
+        let other_edges = all_edges//?这个操作通常用于找到两个集合的交集
             .iter()
             .merge_join_by(to_edges.iter(), |x, y| x.cmp(&y))
             .filter_map(|x| {
@@ -371,7 +373,7 @@ impl BPState {
             self.propagate_all_vars(clear_beliefs);
         }
     }
-    pub fn propagate_acyclic(
+    pub fn propagate_acyclic(//无环传播算法，输入目标变量
         &mut self,
         var: VarId,//变量：类型
         clear_intermediates: bool,
@@ -380,10 +382,10 @@ impl BPState {
         if self.is_cyclic() {
             return Err(BPError::NotAcyclic);
         }
-        for (node, parent) in self.graph.propagation_order(var) {
+        for (node, parent) in self.graph.propagation_order(var) {//graph.propagation_order逆深度优先遍历，见factor_graph.rs
             match node {
                 //match node 是一个匹配语句，用于匹配 node 的值并执行相应的代码块。在这里，node 的类型是 Node，它可以是 Node::Var(var_id) 或 Node::Factor(factor_id) 中的一种
-                Node::Var(var_id) => {//如果node 的值是 Node::Var(var_id)，则匹配成功，将 var_id 绑定到 var_id 变量中
+                Node::Var(var_id) => {//如果node 的值是 Node::Var(var_id)，则匹配成功，将 var_id 绑定到 var 变量中
                     let to_edges = if let Some(dest_factor) = parent {//执行顺序不明？ 总的来说是判断parent是否为空，获取变量和因子连接的边
                         vec![self.graph.var(var_id).edges[&dest_factor.factor().unwrap()]]//vec!用于创建 Vec
                     } else {
